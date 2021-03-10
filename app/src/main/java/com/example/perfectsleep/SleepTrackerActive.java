@@ -1,49 +1,45 @@
 package com.example.perfectsleep;
-//sources: https://medium.com/@iamtjah/how-to-create-a-simple-graph-in-android-6c484324a4c1
-import android.content.Intent;
-import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.View;
-
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 
-public class MainActivity extends AppCompatActivity {
+public class SleepTrackerActive extends AppCompatActivity {
 
 
+    private Chronometer chronometer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("SleepTracker", "line 22");
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Button calendarButton = (Button)findViewById(R.id.buttonCalendar);
-        calendarButton.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_sleep_tracker_active);
+        //this needed?
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
+
+        //Start chronometer
+        chronometer = (Chronometer) findViewById(R.id.chronometer);
+        chronometer.start();
+
+        //Button code to end sleep tracker and bring the user to the main screen
+        Button endSleep = (Button)findViewById(R.id.buttonEndSleepTracker);
+        endSleep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CalendarActivity.class));
+                startActivity(new Intent(SleepTrackerActive.this, MainActivity.class));
             }
         });
-
-        //Button code to bring user to active sleep tracker section
-        Button sleepTrackerButton = (Button)findViewById(R.id.buttonSleepTracker);
-
-        sleepTrackerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SleepTrackerActive.class));
-            }
-        });
+        Log.d("SleepTracker", "line 41");
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -66,3 +62,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 }
+
+
+/*
+links for future features
+https://stackoverflow.com/questions/7197798/get-the-microphone-sound-level-decibel-level-in-android
+
+*/
