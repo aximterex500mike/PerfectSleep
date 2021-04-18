@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "120764623446",
+    "project_id": "perfectsleep-6a038",
+    "storage_bucket": "perfectsleep-6a038.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120764623446:android:1f52315b0890b7bcfd29f7",
+        "android_client_info": {
+          "package_name": "com.example.perfectsleep"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120764623446-9886e4tmfmusdaisjtmup7j4atcjbvms.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBSXQYGhTk1ozIB38RbV9VjkqLTj9vOUk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120764623446-9886e4tmfmusdaisjtmup7j4atcjbvms.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

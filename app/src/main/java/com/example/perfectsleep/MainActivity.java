@@ -3,17 +3,29 @@ package com.example.perfectsleep;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.auth.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +44,43 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, CalendarActivity.class));
             }
         });
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+
+       /* // Code to test Firebase
+
+        //set
+        Map<String, Object> person = new HashMap<>();
+        person.put("firstName", "Mike");
+        person.put("lastName", "Narvaez");
+        person.put("favColor", "Tan");
+
+        db.collection("test").document("testID")
+                .set(person)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("DBase", "DocumentSnapshot successfully written!");
+                    } })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("DBase", "Error writing document", e);
+                    } });
+
+        //get
+        DocumentReference docRef = db.collection("test").document("testID");
+        docRef.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot document = task.getResult(); if (document.exists()) {
+                    Log.d("DBase", "DocumentSnapshot data: " + document.getData()); } else {
+                    Log.d("DBase", "No such document"); }
+            } else {
+                Log.d("DBase", "get failed with ", task.getException());
+            } });*/
+
+
 
         //Button code to bring user to active sleep tracker section
         Button sleepTrackerButton = (Button)findViewById(R.id.buttonSleepTracker);
