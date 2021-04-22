@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.perfectsleep">
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
     <application
@@ -11,7 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PerfectSleep">
-        <activity android:name=".SleepTrackerActive"></activity>
+        <service
+            android:name=".getSleepData"
+            android:exported="false"></service>
+
+        <activity android:name=".SleepTrackerActive" />
         <activity
             android:name=".CalendarActivity"
             android:label="@string/title_activity_calendar"
@@ -26,7 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <meta-data android:name="com.google.android.gms.version"
+
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
     </application>
 
