@@ -61,6 +61,10 @@ public class SleepTrackerActive extends AppCompatActivity{
             @Override
             public void onClick(View v) {
                 if(!start) {
+                    SharedPreferences.Editor e = sharedpreferences.edit();
+                    e.putBoolean("button", true);
+                    e.commit();
+                    endCollectingData();
                     startActivity(new Intent(SleepTrackerActive.this, MainActivity.class));
                 }else{
                     if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED) {
@@ -136,9 +140,6 @@ public class SleepTrackerActive extends AppCompatActivity{
         SharedPreferences.Editor e = sharedpreferences.edit();
         e.putBoolean("button", true);
         e.commit();
-        if(actrec !=null) {
-            endCollectingData();
-        }
     }
 }
 
