@@ -89,7 +89,7 @@ public class SleepTrackerActive extends AppCompatActivity{
         });
     }
 
-    public void startCollectingData(){
+    public void startCollectingData(){  //pull id from firebase and start time
         starttime = 0;//////////get start time from phone
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
@@ -99,7 +99,7 @@ public class SleepTrackerActive extends AppCompatActivity{
         actrec.requestSleepSegmentUpdates(getData, new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY));
     }
 
-    public void endCollectingData(){
+    public void endCollectingData(){ //add endtime
         endtime = 0; //// get end time from phone, store in db
         actrec.removeSleepSegmentUpdates(getData);
     }

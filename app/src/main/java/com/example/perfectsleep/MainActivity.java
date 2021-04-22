@@ -45,18 +45,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        /*FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
-
-       /* // Code to test Firebase
+*/
+       // Code to test Firebase
 
         //set
-        Map<String, Object> person = new HashMap<>();
-        person.put("firstName", "Mike");
-        person.put("lastName", "Narvaez");
-        person.put("favColor", "Tan");
+       /* Map<String, Object> person = new HashMap<>();
+        person.put("firstName", "Alex");
+        person.put("lastName", "M");
+        person.put("favColor", "Red");
 
-        db.collection("test").document("testID")
+        db.collection("test").document("Alex")
                 .set(person)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     } });
 
         //get
-        DocumentReference docRef = db.collection("test").document("testID");
+        DocumentReference docRef = db.collection("test").document("Alex");
         docRef.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 DocumentSnapshot document = task.getResult(); if (document.exists()) {

@@ -11,10 +11,12 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_calendar">CalendarActivity</string>
     <string name="date">Date</string>
-    <string name="sleep_score">Sleep Score</string>
+    <string name="sleep_score">Sleep score</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
-    <string name="select_date">Select Date</string>
+    <string name="select_date">Sleep records</string>
     <string name="sleep_tracker">Sleep Tracker</string>
     <string name="back">Back</string>
+    <string name="last_nights_sleep_score">Last nights sleep score</string>
+    <string name="sleep_score_number">85</string>
 </resources>
