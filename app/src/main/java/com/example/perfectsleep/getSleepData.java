@@ -19,7 +19,7 @@ public class getSleepData extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("Where", "onHandleIntent");
+        Log.e("Where", "onHandleIntent");
         if (intent != null) {
             if(SleepClassifyEvent.hasEvents(intent)){
                 long startTime = intent.getLongExtra("starttime", -1); //start time of current sleep
@@ -34,7 +34,7 @@ public class getSleepData extends IntentService {
                     //calls firestore instance to log sleep data
                     Firestore.getInstance().logSleepData(event.getConfidence(),startTime, event.getTimestampMillis());
 
-                    Log.d("sleepData", "sleep confidence:" + event.getConfidence()
+                    Log.e("sleepData", "sleep confidence:" + event.getConfidence()
                             + "     time stamp:" + event.getTimestampMillis() + "   motion:" + event.getMotion());
                 }
                 //destroy service after done
