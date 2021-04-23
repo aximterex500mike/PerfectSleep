@@ -19,4 +19,5 @@
     <string name="back">Back</string>
     <string name="last_nights_sleep_score">Last nights sleep score</string>
     <string name="sleep_score_number">85</string>
+    <string name="start">Start</string>
 </resources>

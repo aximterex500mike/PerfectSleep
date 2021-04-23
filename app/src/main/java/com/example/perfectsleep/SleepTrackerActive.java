@@ -28,6 +28,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class SleepTrackerActive extends AppCompatActivity{
 
@@ -90,6 +91,7 @@ public class SleepTrackerActive extends AppCompatActivity{
     }
 
     public void startCollectingData(){  //pull id from firebase and start time
+        Log.d("Where", "you are at startCollectingData SleepTrackerActive.java");
         starttime = 0;//////////get start time from phone
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
@@ -100,7 +102,7 @@ public class SleepTrackerActive extends AppCompatActivity{
     }
 
     public void endCollectingData(){ //add endtime
-        endtime = 0; //// get end time from phone, store in db
+        endtime = Calendar.getInstance().getTimeInMillis(); //// get end time from phone, store in db
         actrec.removeSleepSegmentUpdates(getData);
     }
 
