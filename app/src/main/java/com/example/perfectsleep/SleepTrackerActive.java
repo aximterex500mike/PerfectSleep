@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
+import com.example.perfectsleep.firestoreDB.Firestore;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.SleepClassifyEvent;
 import com.google.android.gms.location.SleepSegmentRequest;
@@ -55,6 +56,8 @@ public class SleepTrackerActive extends AppCompatActivity{
         //setSupportActionBar(toolbar);
         setContentView(R.layout.activity_sleep_tracker_active);
         arl =  registerForActivityResult(new ActivityResultContracts.RequestPermission(), yes -> {});
+
+        //startCollectingData(); /////////REMOVE THIS. THIS LINE WAS FOR TESTING
 
         //Button code to end sleep tracker and bring the user to the main screen
         Button endSleep = (Button)findViewById(R.id.buttonEndSleepTracker);
@@ -91,8 +94,14 @@ public class SleepTrackerActive extends AppCompatActivity{
     }
 
     public void startCollectingData(){  //pull id from firebase and start time
-        Log.d("Where", "you are at startCollectingData SleepTrackerActive.java");
+        Log.d("Where1", "you are at startCollectingData SleepTrackerActive.java");
+
+
         starttime = 0;//////////get start time from phone
+
+        //new document in database
+        Firestore.getInstance().startCollecting(starttime);
+
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
         intent.putExtra("id", id);
@@ -103,6 +112,7 @@ public class SleepTrackerActive extends AppCompatActivity{
 
     public void endCollectingData(){ //add endtime
         endtime = Calendar.getInstance().getTimeInMillis(); //// get end time from phone, store in db
+        Firestore.getInstance().endCollecting(endtime);
         actrec.removeSleepSegmentUpdates(getData);
     }
 

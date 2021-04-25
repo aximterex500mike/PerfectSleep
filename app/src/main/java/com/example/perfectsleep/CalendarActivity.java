@@ -1,5 +1,6 @@
 package com.example.perfectsleep;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,21 +10,43 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
-import android.widget.Toast;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.example.perfectsleep.firestoreDB.Firestore;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class CalendarActivity extends AppCompatActivity {
 
     private CalendarView calendarView;
+    private LinearLayout linearLayout;
+    private String TAG = "CalAct";
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        calendarView = (CalendarView) findViewById(R.id.calendarView);
+
+        setLatestSleepScore();
+
+
+        //Firestore.getInstance().buildRecords();
+        //get current day sleep score
+        //need average of sleep confidence scores of a sleep timeframe
+
+        //give it to the user
+
+
+        linearLayout = (LinearLayout) findViewById(R.id.scrollLinearLayout);
+
+        //linearLayout.se
+
+        /*calendarView = (CalendarView) findViewById(R.id.calendarView);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(CalendarView CalendarView, int year, int month, int dayOfMonth) {
@@ -31,10 +54,24 @@ public class CalendarActivity extends AppCompatActivity {
                 //Intent intent = new Intent(CalendarActivity.this,MainActivity.class);
                 //intent.putExtra("date",date);
                 //startActivity(intent);
-                Snackbar snack = Snackbar.make(findViewById(R.id.calendarlayout), "Date: " + date + "\nScore: no data" , Snackbar.LENGTH_LONG);
-                snack.show();
+                //Snackbar snack = Snackbar.make(findViewById(R.id.calendarlayout), "Date: " + date + "\nScore: no data" , Snackbar.LENGTH_LONG);
+                //snack.show();
+
+                //Create and draw graph
+
+                GraphView graph = (GraphView) findViewById(R.id.graph);
+                LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                        new DataPoint(0, 1),
+                        new DataPoint(1, 5),
+                        new DataPoint(2, 3),
+                        new DataPoint(3, 2),
+                        new DataPoint(4, 6)
+                });
+                graph.addSeries(series);
+
+
             }
-        });
+        });*/
         Button backButton = (Button)findViewById(R.id.buttonBack);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,5 +101,19 @@ public class CalendarActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+    public void setLatestSleepScore(){
+        //setting sleep score that appears at top of the activity
+        String score = Firestore.getInstance().getLastSleepScore();
+        BigDecimal bd = new BigDecimal(score);
+        BigDecimal rounded = bd.setScale(1, RoundingMode.FLOOR);
+
+        //give score to user
+        final TextView textViewToChange = (TextView) findViewById(R.id.sleepScoreValue);
+        textViewToChange.setText(
+                rounded + "");
     }
 }

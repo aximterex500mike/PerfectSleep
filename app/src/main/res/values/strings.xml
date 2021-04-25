@@ -20,4 +20,7 @@
     <string name="last_nights_sleep_score">Last nights sleep score</string>
     <string name="sleep_score_number">85</string>
     <string name="start">Start</string>
+    <string name="sleepScoreValG">85*</string>
+    <string name="sleep_score_cal">Sleep score</string>
+    
 </resources>
