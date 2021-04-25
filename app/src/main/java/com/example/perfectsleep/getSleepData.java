@@ -32,7 +32,7 @@ public class getSleepData extends IntentService {
                     //.getTimeStampMillis : time in milliseconds since 1/1/1970
 
                     //calls firestore instance to log sleep data
-                    Firestore.getInstance().logSleepData(event.getConfidence(),startTime, event.getTimestampMillis());
+                    Firestore.getInstance().logSleepData(event.getConfidence(), event.getTimestampMillis());
 
                     Log.e("sleepData", "sleep confidence:" + event.getConfidence()
                             + "     time stamp:" + event.getTimestampMillis() + "   motion:" + event.getMotion());

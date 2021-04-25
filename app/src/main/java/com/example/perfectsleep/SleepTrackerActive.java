@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
+import com.example.perfectsleep.firestoreDB.Firestore;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.SleepClassifyEvent;
 import com.google.android.gms.location.SleepSegmentRequest;
@@ -57,6 +58,8 @@ public class SleepTrackerActive extends AppCompatActivity{
         arl =  registerForActivityResult(new ActivityResultContracts.RequestPermission(), yes -> {});
         sharedpreferences = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
 
+        //startCollectingData(); /////////REMOVE THIS. THIS LINE WAS FOR TESTING
+
         //Button code to end sleep tracker and bring the user to the main screen
         endSleep = (Button)findViewById(R.id.buttonEndSleepTracker);
         endSleep.setOnClickListener(new View.OnClickListener() {
@@ -80,16 +83,21 @@ public class SleepTrackerActive extends AppCompatActivity{
     }
 
     public void startCollectingData(){  //pull id from firebase and start time
-        Log.e("Where", "you are at startCollectingData SleepTrackerActive.java");
+         Log.e("Where", "you are at startCollectingData SleepTrackerActive.java");
 
         //update preferences and swap button
         endSleep.setText("End Sleep");
         start = false;
         starttime = Calendar.getInstance().getTimeInMillis();
+        
+        //call to firestore to add start time to database
+        Firestore.getInstance().startCollecting(starttime);
+      
         SharedPreferences.Editor e = sharedpreferences.edit();
         e.putBoolean("button", false);
         e.putLong("starttime",starttime);
         e.commit();
+
 
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
@@ -103,11 +111,16 @@ public class SleepTrackerActive extends AppCompatActivity{
     }
 
     public void endCollectingData(){ //add endtime
+
+        endtime = Calendar.getInstance().getTimeInMillis(); //// get end time from phone, store in db
+        Firestore.getInstance().endCollecting(endtime);
+
         //used to disable sleep recording, must recreate intents/pending intent incase user has navigated away from page
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
         intent.putExtra("start", starttime);
         getData = PendingIntent.getService(SleepTrackerActive.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
         actrec.removeSleepSegmentUpdates(getData);
 
         //update ui info
