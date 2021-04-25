@@ -12,9 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PerfectSleep">
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+
         <service
             android:name=".getSleepData"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity android:name=".SleepTrackerActive" />
         <activity
