@@ -52,9 +52,10 @@ public class SleepTracker extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_sleep_tracker);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setContentView(R.layout.activity_sleep_tracker);
+        getSupportActionBar().setTitle("PerfectSleep");
         arl =  registerForActivityResult(new ActivityResultContracts.RequestPermission(), yes -> {});
         sharedpreferences = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
         //startCollectingData(); /////////REMOVE THIS. THIS LINE WAS FOR TESTING
