@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
         sleepTrackerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SleepTrackerActive.class));
+                startActivity(new Intent(MainActivity.this, SleepTracker.class));
             }
         });
     }
@@ -140,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         }
 
@@ -163,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
 
     @Override
     public void onListSet(boolean success, ArrayList<DateText> dates) {
+
 
     }
 
