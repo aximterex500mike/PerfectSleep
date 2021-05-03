@@ -10,7 +10,7 @@ import android.widget.SeekBar;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceFragmentCompat;
+//import androidx.preference.PreferenceFragmentCompat;  IMPORT NOT WORKING OVER HERE
 
 public class SettingsActivity extends AppCompatActivity {
     SharedPreferences sp;
