@@ -20,6 +20,11 @@
     <string name="last_nights_sleep_score">Last nights sleep score</string>
     <string name="sleep_score_number">85</string>
     <string name="start">Start</string>
+
+    <string name="sleepScoreValG">85*</string>
+    <string name="sleep_score_cal">Sleep score</string>
+    
+
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preference Titles -->
@@ -36,5 +41,13 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+<<<<<<< Updated upstream
     <string name="title_activity_sleep_tracker">SleepTracker</string>
+=======
+<<<<<<< HEAD
+    <string name="title_activity_sleep_tracker">SleepTracker</string>
+=======
+
+>>>>>>> 741d934070e3584e9cbd55c4086d5622d40f6f82
+>>>>>>> Stashed changes
 </resources>

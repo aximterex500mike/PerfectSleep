@@ -27,6 +27,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 
+<<<<<<< Updated upstream:app/src/main/java/com/example/perfectsleep/SleepTracker.java
+=======
+<<<<<<< HEAD:app/src/main/java/com/example/perfectsleep/SleepTracker.java
+=======
+import com.example.perfectsleep.firestoreDB.Firestore;
+import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.SleepClassifyEvent;
+import com.google.android.gms.location.SleepSegmentRequest;
+import com.google.android.material.snackbar.Snackbar;
+
+
+import java.util.ArrayList;
+>>>>>>> 741d934070e3584e9cbd55c4086d5622d40f6f82:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
+>>>>>>> Stashed changes:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
 import java.util.Calendar;
 
 public class SleepTracker extends AppCompatActivity {
@@ -50,6 +64,15 @@ public class SleepTracker extends AppCompatActivity {
         setSupportActionBar(toolbar);
         arl =  registerForActivityResult(new ActivityResultContracts.RequestPermission(), yes -> {});
         sharedpreferences = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
+<<<<<<< Updated upstream:app/src/main/java/com/example/perfectsleep/SleepTracker.java
+=======
+<<<<<<< HEAD:app/src/main/java/com/example/perfectsleep/SleepTracker.java
+=======
+
+        //startCollectingData(); /////////REMOVE THIS. THIS LINE WAS FOR TESTING
+
+>>>>>>> 741d934070e3584e9cbd55c4086d5622d40f6f82:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
+>>>>>>> Stashed changes:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
         //Button code to end sleep tracker and bring the user to the main screen
         endSleep = (Button)findViewById(R.id.buttonEndSleepTracker);
         endSleep.setOnClickListener(new View.OnClickListener() {
@@ -86,18 +109,31 @@ public class SleepTracker extends AppCompatActivity {
 
 
     public void startCollectingData(){  //pull id from firebase and start time
-        Log.e("Where", "you are at startCollectingData SleepTrackerActive.java");
+         Log.e("Where", "you are at startCollectingData SleepTrackerActive.java");
 
         //update preferences and swap button
         endSleep.setText("End Sleep");
         start = false;
         starttime = Calendar.getInstance().getTimeInMillis();
+        
+        //call to firestore to add start time to database
+        Firestore.getInstance().startCollecting(starttime);
+      
         SharedPreferences.Editor e = sharedpreferences.edit();
         e.putBoolean("button", false);
         e.putLong("starttime",starttime);
         e.commit();
 
+<<<<<<< Updated upstream:app/src/main/java/com/example/perfectsleep/SleepTracker.java
         actrec = new ActivityRecognitionClient(SleepTracker.this);
+=======
+<<<<<<< HEAD:app/src/main/java/com/example/perfectsleep/SleepTracker.java
+        actrec = new ActivityRecognitionClient(SleepTracker.this);
+=======
+
+        actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
+>>>>>>> 741d934070e3584e9cbd55c4086d5622d40f6f82:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
+>>>>>>> Stashed changes:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
         intent = new Intent(getApplicationContext(), getSleepData.class);
         intent.putExtra("starttime", starttime);
         getData = PendingIntent.getService(SleepTracker.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -109,11 +145,24 @@ public class SleepTracker extends AppCompatActivity {
     }
 
     public void endCollectingData(){ //add endtime
+
+        endtime = Calendar.getInstance().getTimeInMillis(); //// get end time from phone, store in db
+        Firestore.getInstance().endCollecting(endtime);
+
         //used to disable sleep recording, must recreate intents/pending intent incase user has navigated away from page
         actrec = new ActivityRecognitionClient(SleepTracker.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
         intent.putExtra("start", starttime);
+<<<<<<< Updated upstream:app/src/main/java/com/example/perfectsleep/SleepTracker.java
         getData = PendingIntent.getService(SleepTracker.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+=======
+<<<<<<< HEAD:app/src/main/java/com/example/perfectsleep/SleepTracker.java
+        getData = PendingIntent.getService(SleepTracker.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+=======
+        getData = PendingIntent.getService(SleepTrackerActive.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+>>>>>>> 741d934070e3584e9cbd55c4086d5622d40f6f82:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
+>>>>>>> Stashed changes:app/src/main/java/com/example/perfectsleep/SleepTrackerActive.java
         actrec.removeSleepSegmentUpdates(getData);
 
         //update ui info
