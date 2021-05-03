@@ -46,10 +46,10 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor addsp = sp.edit();
-                addsp.putBoolean("lockscreen",isChecked);
+                addsp.putBoolean("dontalwaysrun",isChecked);
             }
         });
         sensitivity.setProgress(sp.getInt("sensitivity", 50));
-        screenLock.setChecked(sp.getBoolean("lockscreen",false));
+        screenLock.setChecked(sp.getBoolean("dontalwaysrun",false));
     }
 }

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="69dp"
         android:layout_weight="0"
-        android:text="Keep Screen Awake" />
+        android:text="Stop Background Recording" />
 
     <TextView
         android:id="@+id/divider1"
