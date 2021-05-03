@@ -2,9 +2,13 @@ package com.example.perfectsleep;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,11 +18,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.perfectsleep.firestoreDB.Firestore;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.ArrayList;
 
 public class CalendarActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
 
     private CalendarView calendarView;
     private LinearLayout linearLayout;
@@ -34,44 +44,19 @@ public class CalendarActivity extends AppCompatActivity {
 
         setLatestSleepScore();
 
+        //Build the Recyclerview
+        //call Firestore build records
 
-        //Firestore.getInstance().buildRecords();
-        //get current day sleep score
-        //need average of sleep confidence scores of a sleep timeframe
+       ArrayList<DateText> dates= Firestore.getInstance().buildRecords(); //fill with start dates from database
 
-        //give it to the user
+        recyclerView = findViewById(R.id.recyclerView);
+        //recyclerView.setHasFixedSize(true); Maybe
+        layoutManager = new LinearLayoutManager(this);
+        adapter = new DateAdapter(dates);
 
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
 
-        linearLayout = (LinearLayout) findViewById(R.id.scrollLinearLayout);
-
-        //linearLayout.se
-
-        /*calendarView = (CalendarView) findViewById(R.id.calendarView);
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(CalendarView CalendarView, int year, int month, int dayOfMonth) {
-                String date = year + "/" + month + "/"+ dayOfMonth ;
-                //Intent intent = new Intent(CalendarActivity.this,MainActivity.class);
-                //intent.putExtra("date",date);
-                //startActivity(intent);
-                //Snackbar snack = Snackbar.make(findViewById(R.id.calendarlayout), "Date: " + date + "\nScore: no data" , Snackbar.LENGTH_LONG);
-                //snack.show();
-
-                //Create and draw graph
-
-                GraphView graph = (GraphView) findViewById(R.id.graph);
-                LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                        new DataPoint(0, 1),
-                        new DataPoint(1, 5),
-                        new DataPoint(2, 3),
-                        new DataPoint(3, 2),
-                        new DataPoint(4, 6)
-                });
-                graph.addSeries(series);
-
-
-            }
-        });*/
         Button backButton = (Button)findViewById(R.id.buttonBack);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,14 +91,27 @@ public class CalendarActivity extends AppCompatActivity {
 
 
     public void setLatestSleepScore(){
+        ////////Fix labels, time and set max y value
+
+
+
         //setting sleep score that appears at top of the activity
         String score = Firestore.getInstance().getLastSleepScore();
-        BigDecimal bd = new BigDecimal(score);
-        BigDecimal rounded = bd.setScale(1, RoundingMode.FLOOR);
 
         //give score to user
         final TextView textViewToChange = (TextView) findViewById(R.id.sleepScoreValue);
-        textViewToChange.setText(
-                rounded + "");
+        textViewToChange.setText(score);
+
+        //after setting the sleepScore, set the graph
+        setLatestGraph();
+    }
+
+    public void setLatestGraph(){
+        ///////Fix background color
+        GraphView lineGraph = (GraphView) findViewById(R.id.graph);
+        //lineGraph.setThi
+        LineGraphSeries<DataPoint> defaultGraph= Firestore.getInstance().setDefaultGraph();
+
+        lineGraph.addSeries(defaultGraph);
     }
 }

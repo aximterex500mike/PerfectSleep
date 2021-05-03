@@ -1,14 +1,11 @@
 package com.example.perfectsleep;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,9 +20,7 @@ import android.widget.Chronometer;
 
 import com.example.perfectsleep.firestoreDB.Firestore;
 import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.SleepClassifyEvent;
 import com.google.android.gms.location.SleepSegmentRequest;
-import com.google.android.material.snackbar.Snackbar;
 
 
 import java.util.ArrayList;
@@ -36,7 +31,7 @@ public class SleepTrackerActive extends AppCompatActivity{
 
     private Chronometer chronometer;
     boolean start = true;
-    private long starttime;
+    private long startTime;
     String id = "test";
     ArrayList<Integer> times = new ArrayList<>();
     ArrayList<Integer> scores = new ArrayList<>();
@@ -88,20 +83,20 @@ public class SleepTrackerActive extends AppCompatActivity{
         //update preferences and swap button
         endSleep.setText("End Sleep");
         start = false;
-        starttime = Calendar.getInstance().getTimeInMillis();
+        startTime = Calendar.getInstance().getTimeInMillis();
         
         //call to firestore to add start time to database
-        Firestore.getInstance().startCollecting(starttime);
+        Firestore.getInstance().startCollecting(startTime);
       
         SharedPreferences.Editor e = sharedpreferences.edit();
         e.putBoolean("button", false);
-        e.putLong("starttime",starttime);
+        e.putLong("starttime", startTime);
         e.commit();
 
 
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
-        intent.putExtra("start", starttime);
+        intent.putExtra("start", startTime);
         getData = PendingIntent.getService(SleepTrackerActive.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         actrec.requestSleepSegmentUpdates(getData, new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY));
 
@@ -112,13 +107,14 @@ public class SleepTrackerActive extends AppCompatActivity{
 
     public void endCollectingData(){ //add endtime
 
-        endtime = Calendar.getInstance().getTimeInMillis(); //// get end time from phone, store in db
-        Firestore.getInstance().endCollecting(endtime);
+        //added endtime for database purposes
+        //long endTime = Calendar.getInstance().getTimeInMillis(); //// get end time from phone, store in db
+        //Firestore.getInstance().endCollecting(endTime);
 
         //used to disable sleep recording, must recreate intents/pending intent incase user has navigated away from page
         actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
-        intent.putExtra("start", starttime);
+        intent.putExtra("start", startTime);
         getData = PendingIntent.getService(SleepTrackerActive.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         actrec.removeSleepSegmentUpdates(getData);
@@ -161,7 +157,7 @@ public class SleepTrackerActive extends AppCompatActivity{
             endSleep.setText("End Sleep");
         }
         lock = sharedpreferences.getBoolean("lockscreen",false);
-        starttime = sharedpreferences.getLong("starttime", -1);
+        startTime = sharedpreferences.getLong("starttime", -1);
 
         if(start){
             Log.e("ResumeTest: ", "start true");
@@ -173,9 +169,9 @@ public class SleepTrackerActive extends AppCompatActivity{
         }else{
             Log.e("ResumeTest: ", "lock false");
         }
-        Log.e("ResumeTest: starttime = ", String.valueOf(starttime));
+        Log.e("ResumeTest: starttime = ", String.valueOf(startTime));
 
-        if(starttime != -1){
+        if(startTime != -1){
             //display start time here (replaces chronomete when implemeneted)
         }
     }

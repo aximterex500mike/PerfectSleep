@@ -15,7 +15,7 @@
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="select_date">Sleep records</string>
-    <string name="sleep_tracker">Sleep Tracker</string>
+    <string name="sleep_tracker">Sleep tracker</string>
     <string name="back">Back</string>
     <string name="last_nights_sleep_score">Last nights sleep score</string>
     <string name="sleep_score_number">85</string>
