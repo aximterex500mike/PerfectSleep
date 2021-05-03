@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_tool"
-    tools:context=".MainActivity">
+    tools:context=".SleepTracker">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -22,7 +22,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/activity_sleep_tracker_active" />
+    <include layout="@layout/content_sleep_tracker" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

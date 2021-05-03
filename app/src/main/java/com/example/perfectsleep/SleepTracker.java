@@ -1,40 +1,45 @@
 package com.example.perfectsleep;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+
+import com.example.perfectsleep.firestoreDB.Firestore;
+import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.SleepSegmentRequest;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.TextView;
 
-import com.example.perfectsleep.firestoreDB.Firestore;
-import com.google.android.gms.location.ActivityRecognitionClient;
-import com.google.android.gms.location.SleepSegmentRequest;
-
-
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
-public class SleepTrackerActive extends AppCompatActivity{
+public class SleepTracker extends AppCompatActivity {
 
 
     private Chronometer chronometer;
     boolean start = true;
     private long startTime;
-    String id = "test";
-    ArrayList<Integer> times = new ArrayList<>();
-    ArrayList<Integer> scores = new ArrayList<>();
     ActivityRecognitionClient actrec = null;
     ActivityResultLauncher arl;
     Intent intent;
@@ -42,33 +47,39 @@ public class SleepTrackerActive extends AppCompatActivity{
     PendingIntent getData;
     Button endSleep;
     boolean lock;
+    TextView showTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //this needed?
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        setContentView(R.layout.activity_sleep_tracker_active);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_sleep_tracker);
         arl =  registerForActivityResult(new ActivityResultContracts.RequestPermission(), yes -> {});
         sharedpreferences = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
-
         //startCollectingData(); /////////REMOVE THIS. THIS LINE WAS FOR TESTING
 
+        showTime = findViewById(R.id.textView6);
         //Button code to end sleep tracker and bring the user to the main screen
         endSleep = (Button)findViewById(R.id.buttonEndSleepTracker);
         endSleep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!start) {
-
                     endCollectingData();
-                    startActivity(new Intent(SleepTrackerActive.this, MainActivity.class));
+                    startActivity(new Intent(SleepTracker.this, MainActivity.class));
                 }else{
-                    if(ContextCompat.checkSelfPermission(SleepTrackerActive.this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
-
-                        chronometer.start();
-                        startCollectingData();
+                    if(ContextCompat.checkSelfPermission(SleepTracker.this, Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED) {
+                        PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+                        boolean isIgnoringBatteryOptimizations = pm.isIgnoringBatteryOptimizations(getPackageName());
+                        if(!isIgnoringBatteryOptimizations){
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                            intent.setData(Uri.parse("package:" + getPackageName()));
+                            startActivity(intent);
+                        }else {
+                            startCollectingData();
+                        }
                     }else{
                         arl.launch(Manifest.permission.ACTIVITY_RECOGNITION);
                     }
@@ -78,31 +89,29 @@ public class SleepTrackerActive extends AppCompatActivity{
     }
 
     public void startCollectingData(){  //pull id from firebase and start time
-         Log.e("Where", "you are at startCollectingData SleepTrackerActive.java");
-
         //update preferences and swap button
         endSleep.setText("End Sleep");
         start = false;
         startTime = Calendar.getInstance().getTimeInMillis();
-        
+        SimpleDateFormat simpledatef = new SimpleDateFormat("HH:mm:ss");
+        simpledatef.setTimeZone(TimeZone.getDefault());
+        String strStart = simpledatef.format(new Date(startTime));
+        showTime.setText(strStart);
+
         //call to firestore to add start time to database
         Firestore.getInstance().startCollecting(startTime);
-      
+
         SharedPreferences.Editor e = sharedpreferences.edit();
         e.putBoolean("button", false);
         e.putLong("starttime", startTime);
         e.commit();
 
 
-        actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
+        actrec = new ActivityRecognitionClient(SleepTracker.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
         intent.putExtra("start", startTime);
-        getData = PendingIntent.getService(SleepTrackerActive.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        getData = PendingIntent.getService(SleepTracker.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         actrec.requestSleepSegmentUpdates(getData, new SleepSegmentRequest(SleepSegmentRequest.CLASSIFY_EVENTS_ONLY));
-
-        if(lock){
-            //force screen or cpu to stay on here, researching best way atm not implemented
-        }
     }
 
     public void endCollectingData(){ //add endtime
@@ -112,10 +121,10 @@ public class SleepTrackerActive extends AppCompatActivity{
         //Firestore.getInstance().endCollecting(endTime);
 
         //used to disable sleep recording, must recreate intents/pending intent incase user has navigated away from page
-        actrec = new ActivityRecognitionClient(SleepTrackerActive.this);
+        actrec = new ActivityRecognitionClient(SleepTracker.this);
         intent = new Intent(getApplicationContext(), getSleepData.class);
         intent.putExtra("start", startTime);
-        getData = PendingIntent.getService(SleepTrackerActive.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        getData = PendingIntent.getService(SleepTracker.this,1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         actrec.removeSleepSegmentUpdates(getData);
 
@@ -142,6 +151,7 @@ public class SleepTrackerActive extends AppCompatActivity{
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(SleepTracker.this, SettingsActivity.class));
             return true;
         }
 
@@ -151,40 +161,26 @@ public class SleepTrackerActive extends AppCompatActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        chronometer = (Chronometer) findViewById(R.id.chronometer);
+        showTime = (TextView)findViewById(R.id.textView6);
         start = sharedpreferences.getBoolean("button", true);
         if(start == false){
             endSleep.setText("End Sleep");
         }
-        lock = sharedpreferences.getBoolean("lockscreen",false);
+        lock = sharedpreferences.getBoolean("dontkeeprecording",false);
         startTime = sharedpreferences.getLong("starttime", -1);
 
-        if(start){
-            Log.e("ResumeTest: ", "start true");
-        }else{
-            Log.e("ResumeTest: ", "start false");
-        }
-        if(lock){
-            Log.e("ResumeTest: ", "lock true");
-        }else{
-            Log.e("ResumeTest: ", "lock false");
-        }
-        Log.e("ResumeTest: starttime = ", String.valueOf(startTime));
-
         if(startTime != -1){
-            //display start time here (replaces chronomete when implemeneted)
+            SimpleDateFormat simpledatef = new SimpleDateFormat("HH:mm:ss");
+            String strStart = simpledatef.format(new Date(startTime));
+            showTime.setText(strStart);
         }
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-            }
+    protected void onStop() {
+        super.onStop();
+        if(lock){
+            endCollectingData();
+        }
+    }
 }
-
-
-
-/*
-links for future features
-https://stackoverflow.com/questions/7197798/get-the-microphone-sound-level-decibel-level-in-android
-*/
