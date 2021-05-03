@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         sleepTrackerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SleepTrackerActive.class));
+                startActivity(new Intent(MainActivity.this, SleepTracker.class));
             }
         });
     }
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(MainActivity.this, SettingsActivity.class));
             return true;
         }
 
@@ -159,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setLatestSleepScore(){
-        //setting sleep score that appears at top of the activity
+        //Setting sleep score that appears at top of the activity
         String score = Firestore.getInstance().getLastSleepScore();
 
         //give score to user

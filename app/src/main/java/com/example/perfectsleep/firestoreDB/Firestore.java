@@ -1,9 +1,7 @@
 package com.example.perfectsleep.firestoreDB;
 
 import android.app.Activity;
-import android.provider.ContactsContract;
 import android.util.Log;
-import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 
@@ -27,14 +25,12 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class Firestore {
 
