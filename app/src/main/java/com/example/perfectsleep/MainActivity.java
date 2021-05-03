@@ -4,13 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.perfectsleep.firestoreDB.Firestore;
-import com.example.perfectsleep.firestoreDB.SleepData;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -23,12 +19,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Firestore.OnDataSetListener {
+
+    public String StartSleepScore;
+
 
     //TESTING ONLY
     //private final Map<String, Integer> map1 = new HashMap<>();
@@ -42,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Button calendarButton = (Button)findViewById(R.id.buttonCalendar);
+        Button calendarButton = (Button) findViewById(R.id.buttonCalendar);
         calendarButton.setOnClickListener(new View.OnClickListener() { // need to look at
             @Override
             public void onClick(View v) {
@@ -53,80 +50,71 @@ public class MainActivity extends AppCompatActivity {
         Firestore.getInstance().authenticate(this, (success) -> {
             if (success) Log.d("FireDB", "Authenticated");
             else Toast.makeText(MainActivity.this, "Authentication failed.",
-                    Toast.LENGTH_SHORT).show();;
+                    Toast.LENGTH_SHORT).show();
+            ;
         });
+
+        Firestore.getInstance().OnDataSetListener(this);
 
         //sets sleep score under the moon
         //works, but there is a bug: upon fresh start the score is 0
-        setLatestSleepScore();
+        try {
+            setLatestSleepScore();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        //FOR TESTING PURPOSES
-        /*final FirebaseAuth auth = FirebaseAuth.getInstance();
+        /*//FOR TESTING PURPOSES
+        final FirebaseAuth auth = FirebaseAuth.getInstance();
         final String usr = auth.getCurrentUser().getUid();
 
 
-        map1.put(String.valueOf(1619220000), 63);
-        map1.put(String.valueOf(1619221000), 75);
-        map1.put(String.valueOf(1619222000), 89);
-        map1.put(String.valueOf(1619223000), 100);
-        map1.put(String.valueOf(1619224000), 100);
-        map1.put(String.valueOf(1619225000), 100);
-        map1.put(String.valueOf(1619226000), 42);
-        map1.put(String.valueOf(1619227000), 55);
-        map1.put(String.valueOf(1619228000), 20);
-        map1.put(String.valueOf(1619229000), 10);
-        map1.put(String.valueOf(1619230000), 0);
+        map1.put(String.valueOf(1620052615103L), 63);
+        map1.put(String.valueOf(1620053216103L), 75);
+        map1.put(String.valueOf(1620053817103L), 89);
+        map1.put(String.valueOf(1620054418103L), 100);
+        map1.put(String.valueOf(1620055019103L), 100);
+        map1.put(String.valueOf(1620055620103L), 100);
+        map1.put(String.valueOf(1620056221103L), 42);
+        map1.put(String.valueOf(1620056822103L), 55);
+        map1.put(String.valueOf(1620057423103L), 20);
+        map1.put(String.valueOf(1620058024103L), 10);
+        map1.put(String.valueOf(1620058625103L), 0);
 
 
-        map2.put(String.valueOf(1619320000), 34);
-        map2.put(String.valueOf(1619321000), 88);
-        map2.put(String.valueOf(1619322000), 44);
-        map2.put(String.valueOf(1619323000), 100);
-        map2.put(String.valueOf(1619324000), 100);
-        map2.put(String.valueOf(1619325000), 100);
-        map2.put(String.valueOf(1619326000), 15);
-        map2.put(String.valueOf(1619327000), 0);
-        map2.put(String.valueOf(1619328000), 10);
-        map2.put(String.valueOf(1619329000), 20);
-        map2.put(String.valueOf(1619330000), 0);
+        map2.put(String.valueOf(1620136615103L), 34);
+        map2.put(String.valueOf(1620137215103L), 88);
+        map2.put(String.valueOf(1620137815103L), 44);
+        map2.put(String.valueOf(1620138415103L), 100);
+        map2.put(String.valueOf(1620139015103L), 100);
+        map2.put(String.valueOf(1620139615103L), 100);
+        map2.put(String.valueOf(1620140215103L), 15);
+        map2.put(String.valueOf(1620140815103L), 0);
+        map2.put(String.valueOf(1620141415103L), 10);
+        map2.put(String.valueOf(1620142015103L), 20);
+        map2.put(String.valueOf(1620142615103L), 0);
 
 
 
-        SleepData sd = new SleepData(1619220000,1619230000, map1);
-        SleepData sd2 = new SleepData(1619320000,1619330000, map2);
+        SleepData sd = new SleepData(1620052615103L,map1);
+        SleepData sd2 = new SleepData(1620136615103L,map2);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
         db.collection(usr).document(sd.getStartTime() + "").set(sd)
-            .addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("TEST", "DocumentSnapshot successfully written!");
-            } })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("TEST", "Error writing document", e);
-                    } });
+            .addOnSuccessListener(aVoid -> Log.d("TEST", "DocumentSnapshot successfully written!"))
+                .addOnFailureListener(e -> Log.d("TEST", "Error writing document", e));
 
         db.collection(usr).document(sd2.getStartTime() + "") .set(sd2)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TEST", "DocumentSnapshot successfully written!");
-                    } })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("TEST", "Error writing document", e);
-                    } });
-*/
-        //FOR TESTING PURPOSES
+                .addOnSuccessListener(aVoid -> Log.d("TEST", "DocumentSnapshot successfully written!"))
+                .addOnFailureListener(e -> Log.d("TEST", "Error writing document", e));
+
+        //FOR TESTING PURPOSES*/
 
 
         //Button code to bring user to active sleep tracker section
-        Button sleepTrackerButton = (Button)findViewById(R.id.buttonSleepTracker);
+        Button sleepTrackerButton = (Button) findViewById(R.id.buttonSleepTracker);
 
         sleepTrackerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,12 +146,24 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setLatestSleepScore(){
-        //setting sleep score that appears at top of the activity
-        String score = Firestore.getInstance().getLastSleepScore();
-
-        //give score to user
-        final TextView textViewToChange = (TextView) findViewById(R.id.sleep_score);
-        textViewToChange.setText(score);
+    public void setLatestSleepScore() throws ParseException {
+        Firestore.getInstance().getFireData(false, null);
     }
+
+    @Override
+    public void onScoreAndDataSet(boolean success, String score, ArrayList<String> resultList) {
+        if (success) {
+            StartSleepScore = score;
+            final TextView textViewToChange = (TextView) findViewById(R.id.sleep_score);
+            textViewToChange.setText(score);
+        } else {
+            Log.d("Data", "could not get data");
+        }
+    }
+
+    @Override
+    public void onListSet(boolean success, ArrayList<DateText> dates) {
+
+    }
+
 }

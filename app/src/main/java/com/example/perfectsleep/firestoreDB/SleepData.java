@@ -18,6 +18,7 @@ public class SleepData {
         this.timeConfidence = timeConfidence;
     }
 
+
     public Long getStartTime() {
         return startTime;
     }
