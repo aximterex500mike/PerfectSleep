@@ -2,37 +2,31 @@ package com.example.perfectsleep;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.CalendarView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 import com.example.perfectsleep.firestoreDB.Firestore;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
-public class CalendarActivity extends AppCompatActivity {
+public class CalendarActivity extends AppCompatActivity implements Firestore.OnDataSetListener {
 
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
-
-    private CalendarView calendarView;
-    private LinearLayout linearLayout;
-    private String TAG = "CalAct";
+    private DateAdapter adapter;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -41,23 +35,17 @@ public class CalendarActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Firestore.getInstance().OnDataSetListener(this);
 
-        setLatestSleepScore();
+        try {
+            setNewData(false, null);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-        //Build the Recyclerview
-        //call Firestore build records
+        Firestore.getInstance().buildRecords(); //fill recycler with start dates from database
 
-       ArrayList<DateText> dates= Firestore.getInstance().buildRecords(); //fill with start dates from database
-
-        recyclerView = findViewById(R.id.recyclerView);
-        //recyclerView.setHasFixedSize(true); Maybe
-        layoutManager = new LinearLayoutManager(this);
-        adapter = new DateAdapter(dates);
-
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
-
-        Button backButton = (Button)findViewById(R.id.buttonBack);
+        Button backButton = (Button) findViewById(R.id.buttonBack);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,29 +77,51 @@ public class CalendarActivity extends AppCompatActivity {
     }
 
 
+    public void setNewData(boolean wantSpecific, String date) throws ParseException {
+        Firestore.getInstance().getFireData(wantSpecific, date);
 
-    public void setLatestSleepScore(){
-        ////////Fix labels, time and set max y value
-
-
-
-        //setting sleep score that appears at top of the activity
-        String score = Firestore.getInstance().getLastSleepScore();
-
-        //give score to user
-        final TextView textViewToChange = (TextView) findViewById(R.id.sleepScoreValue);
-        textViewToChange.setText(score);
-
-        //after setting the sleepScore, set the graph
-        setLatestGraph();
     }
 
-    public void setLatestGraph(){
-        ///////Fix background color
-        GraphView lineGraph = (GraphView) findViewById(R.id.graph);
-        //lineGraph.setThi
-        LineGraphSeries<DataPoint> defaultGraph= Firestore.getInstance().setDefaultGraph();
+    @Override
+    public void onScoreAndDataSet(boolean success, String score, ArrayList<String> resultList) {
+        if (success) {
+            //change score
+            TextView textViewToChange = findViewById(R.id.sleepScoreValue);
+            textViewToChange.setText(score);
 
-        lineGraph.addSeries(defaultGraph);
+            //update results
+            ListView listView = findViewById(R.id.sleepResults);
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getApplicationContext(),
+                    android.R.layout.simple_list_item_1, resultList);
+            listView.setAdapter(arrayAdapter);
+            arrayAdapter.notifyDataSetChanged();
+
+
+        } else {
+            Log.d("Data", "could not get data");
+        }
+    }
+
+    @Override
+    public void onListSet(boolean success, ArrayList<DateText> dates) {
+        if (success) {
+            RecyclerView recyclerView = findViewById(R.id.recyclerView);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+            adapter = new DateAdapter(dates);
+
+
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.setAdapter(adapter);
+
+            adapter.setOnDateClickListener(pos -> {
+                DateText date = dates.get(pos);
+                String dateClicked = date.getDate();  //this is a string of the date shown in recyclerview
+                setNewData(true, dateClicked);
+                adapter.notifyItemChanged(pos);
+            });
+
+        } else {
+            Log.d("Data", "could not get data");
+        }
     }
 }
