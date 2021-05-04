@@ -48,7 +48,16 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
         });
 
         Firestore.getInstance().authenticate(this, (success) -> {
-            if (success) Log.d("FireDB", "Authenticated");
+            if (success){
+                Log.d("FireDB", "Authenticated");
+                //sets sleep score under the moon
+                //works, but there is a bug: upon fresh start the score is 0
+                try {
+                    setLatestSleepScore();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
             else Toast.makeText(MainActivity.this, "Authentication failed.",
                     Toast.LENGTH_SHORT).show();
             ;
@@ -56,19 +65,11 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
 
         Firestore.getInstance().OnDataSetListener(this);
 
-        //sets sleep score under the moon
-        //works, but there is a bug: upon fresh start the score is 0
-        try {
-            setLatestSleepScore();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+
 
         /*//FOR TESTING PURPOSES
         final FirebaseAuth auth = FirebaseAuth.getInstance();
         final String usr = auth.getCurrentUser().getUid();
-
-
         map1.put(String.valueOf(1620052615103L), 63);
         map1.put(String.valueOf(1620053216103L), 75);
         map1.put(String.valueOf(1620053817103L), 89);
@@ -80,8 +81,6 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
         map1.put(String.valueOf(1620057423103L), 20);
         map1.put(String.valueOf(1620058024103L), 10);
         map1.put(String.valueOf(1620058625103L), 0);
-
-
         map2.put(String.valueOf(1620136615103L), 34);
         map2.put(String.valueOf(1620137215103L), 88);
         map2.put(String.valueOf(1620137815103L), 44);
@@ -93,23 +92,15 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
         map2.put(String.valueOf(1620141415103L), 10);
         map2.put(String.valueOf(1620142015103L), 20);
         map2.put(String.valueOf(1620142615103L), 0);
-
-
-
         SleepData sd = new SleepData(1620052615103L,map1);
         SleepData sd2 = new SleepData(1620136615103L,map2);
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-
         db.collection(usr).document(sd.getStartTime() + "").set(sd)
             .addOnSuccessListener(aVoid -> Log.d("TEST", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.d("TEST", "Error writing document", e));
-
         db.collection(usr).document(sd2.getStartTime() + "") .set(sd2)
                 .addOnSuccessListener(aVoid -> Log.d("TEST", "DocumentSnapshot successfully written!"))
                 .addOnFailureListener(e -> Log.d("TEST", "Error writing document", e));
-
         //FOR TESTING PURPOSES*/
 
 

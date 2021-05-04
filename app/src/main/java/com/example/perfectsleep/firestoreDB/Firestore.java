@@ -35,7 +35,7 @@ public class Firestore {
     private FirebaseFirestore database;
     private DocumentReference date;
     final FirebaseAuth auth = FirebaseAuth.getInstance();
-    final String usr = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+    //final String usr = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
     SleepData sleepData, sdForSetup;
     private String  averageSleepScoreResult = "0";
@@ -93,7 +93,7 @@ public class Firestore {
         //send start time
         sleepData = new SleepData();
 
-        database.collection(usr)
+        database.collection(user.getUid())
                 .document(startTime + "")
                 .set(sleepData)
                 .addOnSuccessListener(aVoid -> {
@@ -102,8 +102,8 @@ public class Firestore {
                 .addOnFailureListener(e -> {
                     //Log.d(TAG, "ERROR: " + e);
                 });
-        //set document reference "date" 
-        date = database.collection(usr).document(startTime + "");  //in millis
+        //set document reference "date"
+        date = database.collection(user.getUid()).document(startTime + "");  //in millis
     }
 
 
@@ -136,7 +136,7 @@ public class Firestore {
 
             // Queries firestore for the specific data for the date selected
             long oneDayInMillis = 86400000;
-            database.collection(usr)
+            database.collection(user.getUid())
                     .whereGreaterThan("startTime", uTime)
                     .whereLessThan("startTime", uTime + oneDayInMillis) //find the sleep data for that day
                     .limit(1)
@@ -144,27 +144,29 @@ public class Firestore {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             QuerySnapshot qSnapshot = task.getResult();
-                            sdForSetup = qSnapshot.toObjects(SleepData.class).get(0);
+                            if (!qSnapshot.isEmpty()) {
+                                sdForSetup = qSnapshot.toObjects(SleepData.class).get(0);
 
-                            //getting sleep score
-                            List<Integer> targetList = new ArrayList<>(sdForSetup.getTimeConfidence().values());
+                                //getting sleep score
+                                List<Integer> targetList = new ArrayList<>(sdForSetup.getTimeConfidence().values());
 
-                            int size = targetList.size();
-                            if (size != 0) {
-                                int sum = 0;
-                                for (Integer i : targetList) sum += i;
+                                int size = targetList.size();
+                                if (size != 0) {
+                                    int sum = 0;
+                                    for (Integer i : targetList) sum += i;
 
-                                averageSleepScoreResult = decimalFormat.format((double) sum / size);
+                                    averageSleepScoreResult = decimalFormat.format((double) sum / size);
 
-                                ArrayList<String> resultsList = new ArrayList<>();
-                                timeConfidence = sdForSetup.getTimeConfidence();  //times mapped to confidences
-                                timeConfidence = new TreeMap<>(timeConfidence);
-                                for (String time: timeConfidence.keySet()){
-                                    resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time));
+                                    ArrayList<String> resultsList = new ArrayList<>();
+                                    timeConfidence = sdForSetup.getTimeConfidence();  //times mapped to confidences
+                                    timeConfidence = new TreeMap<>(timeConfidence);
+                                    for (String time : timeConfidence.keySet()) {
+                                        resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time));
+                                    }
+                                    //Log.d(TAG, "ave sleepscore: " + averageSleepScoreResult);
+                                    listener.onScoreAndDataSet(true, averageSleepScoreResult, resultsList);
                                 }
-                                //Log.d(TAG, "ave sleepscore: " + averageSleepScoreResult);
-                                listener.onScoreAndDataSet(true, averageSleepScoreResult, resultsList);
-                            }
+                            }else listener.onScoreAndDataSet(true, "0",new ArrayList<>());
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -173,37 +175,39 @@ public class Firestore {
 
         }else {
             //gets the latest sleep score
-            database.collection(usr)
+            database.collection(user.getUid())
                     .orderBy("startTime", Query.Direction.DESCENDING)
                     .limit(1)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             QuerySnapshot qSnapshot = task.getResult();
-                            sdForSetup = qSnapshot.toObjects(SleepData.class).get(0); //data for latest night
+                            if (!qSnapshot.isEmpty()) {
+                                sdForSetup = qSnapshot.toObjects(SleepData.class).get(0); //data for latest night
 
-                            //getting sleep score
-                            List<Integer> targetList = new ArrayList<>(sdForSetup.getTimeConfidence().values());
+                                //getting sleep score
+                                List<Integer> targetList = new ArrayList<>(sdForSetup.getTimeConfidence().values());
 
-                            int size = targetList.size();
+                                int size = targetList.size();
 
-                            if (size != 0) {
-                                int sum = 0;
-                                for (Integer i : targetList)
-                                    sum += i;
+                                if (size != 0) {
+                                    int sum = 0;
+                                    for (Integer i : targetList)
+                                        sum += i;
 
-                                averageSleepScoreResult = decimalFormat.format((double) sum / size);
+                                    averageSleepScoreResult = decimalFormat.format((double) sum / size);
 
-                                //building listView
-                                ArrayList<String> resultsList = new ArrayList<>();
-                                timeConfidence = sdForSetup.getTimeConfidence();  //times mapped to confidences
-                                timeConfidence = new TreeMap<>(timeConfidence);
-                                for (String time: timeConfidence.keySet()){
-                                    resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time));
+                                    //building listView
+                                    ArrayList<String> resultsList = new ArrayList<>();
+                                    timeConfidence = sdForSetup.getTimeConfidence();  //times mapped to confidences
+                                    timeConfidence = new TreeMap<>(timeConfidence);
+                                    for (String time: timeConfidence.keySet()){
+                                        resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time));
+                                    }
+                                    //Log.d(TAG, "ave sleepscore: " + averageSleepScoreResult);
+                                    listener.onScoreAndDataSet(true, averageSleepScoreResult, resultsList);
                                 }
-                                //Log.d(TAG, "ave sleepscore: " + averageSleepScoreResult);
-                                listener.onScoreAndDataSet(true, averageSleepScoreResult, resultsList);
-                            }
+                            }else listener.onScoreAndDataSet(true, "0",new ArrayList<>());
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
                         }
@@ -211,25 +215,25 @@ public class Firestore {
         }
     }
 
-   public void buildRecords(){
+    public void buildRecords(){
         //  What this does is build an arrayList of dateTexts that will fill the recycler view
 
-       ArrayList<DateText> res = new ArrayList<>();
-       database.collection(usr)
-               .get()
-               .addOnCompleteListener(task -> {
-                   if (task.isSuccessful()) {
-                       for (QueryDocumentSnapshot document : task.getResult()) {
-                           String unix = document.getId();
-                           Log.d(TAG, unix + "");
-                           res.add(unixToDate(Long.parseLong(unix))); //unix in millis
-                       }
-                       listener.onListSet(true, res);
-                       Log.d("rescheck", res + "");
-                   } else {
-                       Log.d(TAG, "Error getting documents: ", task.getException());
-                   }
-               });
+        ArrayList<DateText> res = new ArrayList<>();
+        database.collection(user.getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String unix = document.getId();
+                            Log.d(TAG, unix + "");
+                            res.add(unixToDate(Long.parseLong(unix))); //unix in millis
+                        }
+                        listener.onListSet(true, res);
+                        Log.d("rescheck", res + "");
+                    } else {
+                        Log.d(TAG, "Error getting documents: ", task.getException());
+                    }
+                });
     }
 
     public DateText unixToDate(Long unix){
@@ -243,7 +247,7 @@ public class Firestore {
         return new DateText(newDate);
     }
 
-   public String unixToHour(Long unix){
+    public String unixToHour(Long unix){
 
         Date date = new Date(unix);
         @SuppressLint("SimpleDateFormat") SimpleDateFormat setDf = new SimpleDateFormat("kk:mm");

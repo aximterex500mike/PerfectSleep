@@ -129,14 +129,14 @@
 
     <Button
         android:id="@+id/buttonCalendar"
-        android:layout_width="177dp"
-        android:layout_height="57dp"
+        android:layout_width="219dp"
+        android:layout_height="61dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/select_date"
         android:textAllCaps="false"
         android:textColorHighlight="#FFFFFF"
         android:textColorLink="@color/purple_500"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
