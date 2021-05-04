@@ -29,7 +29,7 @@ public class SettingsActivity extends AppCompatActivity {
         SeekBar sensitivity = findViewById(R.id.senseBar);
         AlertDialog.Builder alertd = new AlertDialog.Builder(SettingsActivity.this);
         alertd.setTitle("Background Data")
-                .setMessage("Collecting sleep data in background can impact battery life.")
+                .setMessage("Sleep data will continue being collected outside of application. This can impact battery life.")
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
