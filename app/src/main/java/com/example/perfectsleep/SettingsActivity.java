@@ -13,6 +13,7 @@ import android.widget.SeekBar;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -23,7 +24,6 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
-        //ActionBar actionBar = getSupportActionBar();
         sp = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
         screenLock = findViewById(R.id.screenLockCheck);
         SeekBar sensitivity = findViewById(R.id.senseBar);

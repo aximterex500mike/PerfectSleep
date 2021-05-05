@@ -1,6 +1,7 @@
 package com.example.perfectsleep;
 //sources: https://medium.com/@iamtjah/how-to-create-a-simple-graph-in-android-6c484324a4c1
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.example.perfectsleep.firestoreDB.Firestore;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements Firestore.OnDataSetListener {
 
     public String StartSleepScore;
-
+    SharedPreferences sp;
 
     //TESTING ONLY
     //private final Map<String, Integer> map1 = new HashMap<>();
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Perfect Sleep");
         Button calendarButton = (Button) findViewById(R.id.buttonCalendar);
         calendarButton.setOnClickListener(new View.OnClickListener() { // need to look at
             @Override
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
                 startActivity(new Intent(MainActivity.this, CalendarActivity.class));
             }
         });
+        sp = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
 
         Firestore.getInstance().authenticate(this, (success) -> {
             if (success){
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
         });
 
         Firestore.getInstance().OnDataSetListener(this);
+
 
 
 
@@ -139,13 +143,13 @@ public class MainActivity extends AppCompatActivity implements Firestore.OnDataS
     }
 
     public void setLatestSleepScore() throws ParseException {
-        Firestore.getInstance().getFireData(false, null);
+        Firestore.getInstance().getFireData(false, null, sp.getInt("sensitivity", 50));
     }
 
     @Override
     public void onScoreAndDataSet(boolean success, String score, ArrayList<String> resultList) {
         if (success) {
-            StartSleepScore = score;
+            score = String.valueOf(Float.parseFloat(score) * sp.getInt("sensitivity", 50));
             final TextView textViewToChange = (TextView) findViewById(R.id.sleep_score);
             textViewToChange.setText(score);
         } else {

@@ -2,6 +2,7 @@ package com.example.perfectsleep;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 public class CalendarActivity extends AppCompatActivity implements Firestore.OnDataSetListener {
 
     private DateAdapter adapter;
-
+    SharedPreferences sp;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +36,10 @@ public class CalendarActivity extends AppCompatActivity implements Firestore.OnD
         setContentView(R.layout.activity_calendar);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Perfect Sleep");
         Firestore.getInstance().OnDataSetListener(this);
+
+        sp = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
 
         try {
             setNewData(false, null);
@@ -78,13 +82,14 @@ public class CalendarActivity extends AppCompatActivity implements Firestore.OnD
 
 
     public void setNewData(boolean wantSpecific, String date) throws ParseException {
-        Firestore.getInstance().getFireData(wantSpecific, date);
+        Firestore.getInstance().getFireData(wantSpecific, date, sp.getInt("sensitivity", 50));
 
     }
 
     @Override
     public void onScoreAndDataSet(boolean success, String score, ArrayList<String> resultList) {
         if (success) {
+            score = String.valueOf(Float.parseFloat(score) * sp.getInt("sensitivity", 50));
             //change score
             TextView textViewToChange = findViewById(R.id.sleepScoreValue);
             textViewToChange.setText(score);

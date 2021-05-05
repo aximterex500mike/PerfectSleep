@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.perfectsleep.firestoreDB.Firestore;
+import com.example.perfectsleep.firestoreDB.SleepData;
 import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.SleepSegmentRequest;
 
@@ -28,6 +29,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -55,7 +57,7 @@ public class SleepTracker extends AppCompatActivity {
         setContentView(R.layout.activity_sleep_tracker);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("PerfectSleep");
+        getSupportActionBar().setTitle("Perfect Sleep");
         arl =  registerForActivityResult(new ActivityResultContracts.RequestPermission(), yes -> {});
         sharedpreferences = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
         //startCollectingData(); /////////REMOVE THIS. THIS LINE WAS FOR TESTING
@@ -134,6 +136,9 @@ public class SleepTracker extends AppCompatActivity {
         e.putBoolean("button", true);
         e.putLong("starttime", -1);
         e.commit();
+
+        Toast.makeText(SleepTracker.this, "Sleep data logged.",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
