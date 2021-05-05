@@ -68,18 +68,6 @@
         app:srcCompat="@drawable/star" />
 
     <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="12dp"
-        android:layout_height="13dp"
-        android:layout_marginTop="284dp"
-        android:layout_marginEnd="28dp"
-        android:scaleX="0.2"
-        android:scaleY="0.2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/star" />
-
-    <ImageView
         android:id="@+id/imageView4"
         android:layout_width="12dp"
         android:layout_height="13dp"
@@ -166,21 +154,33 @@
         android:id="@+id/textView7"
         android:layout_width="147dp"
         android:layout_height="38dp"
-        android:layout_marginTop="272dp"
+        android:layout_marginTop="268dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/sleep_score"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.386"
+        app:layout_constraintHorizontal_bias="0.303"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="12dp"
+        android:layout_height="13dp"
+        android:layout_marginTop="280dp"
+        android:layout_marginEnd="48dp"
+        android:scaleX="0.2"
+        android:scaleY="0.2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/star" />
+
     <TextView
         android:id="@+id/sleep_score"
-        android:layout_width="72dp"
+        android:layout_width="129dp"
         android:layout_height="38dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="sans-serif-light"
         android:text="@string/sleep_score_number"
         android:textColor="#FFFFFF"

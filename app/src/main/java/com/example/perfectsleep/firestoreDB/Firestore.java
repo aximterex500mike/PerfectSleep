@@ -2,9 +2,11 @@ package com.example.perfectsleep.firestoreDB;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.perfectsleep.DateText;
+import com.example.perfectsleep.SettingsActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,6 +32,7 @@ public class Firestore {
     String TAG = "firestore";
     private static final DecimalFormat decimalFormat = new DecimalFormat( "0.0");
 
+    //SharedPreferences sp = getSharedPreferences("Setting", getApplicationContext().MODE_PRIVATE);
     private static Firestore INSTANCE;
     private FirebaseUser user;
     private FirebaseFirestore database;
@@ -107,11 +110,11 @@ public class Firestore {
     }
 
 
-    public void logSleepData(int confidence, long timestamp){ //puts data gotten from getSleepData.java
+    public void logSleepData(int confidence, long timestamp, long startTime){ //puts data gotten from getSleepData.java
         //confidence is 0-100 and timestamp is in milliseconds
         //updating map
 
-        timeConfidence.put(String.valueOf(timestamp), confidence);
+        timeConfidence.put(String.valueOf(timestamp), confidence);// * sensitivityMultiplier);
         sleepData.setTimeConfidence(timeConfidence);
 
         //transaction to put updated map in the database
@@ -125,7 +128,7 @@ public class Firestore {
     }
 
 
-    public void getFireData(boolean wantSpecific, String date) throws ParseException {
+    public void getFireData(boolean wantSpecific, String date, int sensitivity) throws ParseException {
 
         sdForSetup = new SleepData();
 
@@ -161,7 +164,7 @@ public class Firestore {
                                     timeConfidence = sdForSetup.getTimeConfidence();  //times mapped to confidences
                                     timeConfidence = new TreeMap<>(timeConfidence);
                                     for (String time : timeConfidence.keySet()) {
-                                        resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time));
+                                        resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + (timeConfidence.get(time)*sensitivity));
                                     }
                                     //Log.d(TAG, "ave sleepscore: " + averageSleepScoreResult);
                                     listener.onScoreAndDataSet(true, averageSleepScoreResult, resultsList);
@@ -202,7 +205,7 @@ public class Firestore {
                                     timeConfidence = sdForSetup.getTimeConfidence();  //times mapped to confidences
                                     timeConfidence = new TreeMap<>(timeConfidence);
                                     for (String time: timeConfidence.keySet()){
-                                        resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time));
+                                        resultsList.add(unixToHour(Long.parseLong(time)) + "    Score " + timeConfidence.get(time)*sensitivity);
                                     }
                                     //Log.d(TAG, "ave sleepscore: " + averageSleepScoreResult);
                                     listener.onScoreAndDataSet(true, averageSleepScoreResult, resultsList);
